@@ -1,14 +1,10 @@
 package com.github.zhenwei.jmeter.jce;
 
 import com.github.zhenwei.jmeter.params.BaseParams;
-import com.github.zhenwei.string.tools.StringTools;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Security;
 import org.apache.jmeter.config.Arguments;
-import org.apache.jmeter.protocol.java.sampler.JavaSamplerClient;
+import org.apache.jmeter.protocol.java.sampler.AbstractJavaSamplerClient;
 import org.apache.jmeter.protocol.java.sampler.JavaSamplerContext;
 import org.apache.jmeter.samplers.SampleResult;
 
@@ -18,16 +14,16 @@ import org.apache.jmeter.samplers.SampleResult;
  * @date: 2023/5/8  10:07
  * @since: 1.0.0
  */
-public class TestingGenerateKeyPair implements JavaSamplerClient {
+public class TestingGenerateKeyPair extends AbstractJavaSamplerClient {
 
   String provider = null, keyAlg = null;
-  int keyIndex = 1, keyLength = 256;
+  int keyLength = 256;
 
   @Override
   public void setupTest(JavaSamplerContext context) {
     provider = context.getParameter(BaseParams.provider);
     keyAlg = context.getParameter(BaseParams.keyAlg);
-    keyIndex = context.getIntParameter(BaseParams.keyIndex);
+    keyLength = context.getIntParameter(BaseParams.keyLength);
   }
 
   @Override
@@ -49,13 +45,12 @@ public class TestingGenerateKeyPair implements JavaSamplerClient {
     return result;
   }
 
-  @Override
-  public void teardownTest(JavaSamplerContext context) {
-
-  }
 
   @Override
   public Arguments getDefaultParameters() {
-    return null;
+    Arguments arguments = new Arguments();
+    arguments.addArgument(BaseParams.keyAlg, "SM2");
+    arguments.addArgument(BaseParams.keyLength, "256");
+    return arguments;
   }
 }
